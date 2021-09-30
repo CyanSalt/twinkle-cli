@@ -1,0 +1,18 @@
+{
+  "extends": "@cyansalt/tsconfig/tsconfig.base",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/dist",
+    "**/node_modules",
+    "**/tests"
+  ]
+}
