@@ -25,7 +25,10 @@ export const configMiddleware = ((argv: Arguments<{}>, yargs: Argv) => {
   const { aliases, configuration } = yargs.parsed
   const configArgv = yargsParser(process.argv.slice(2), {
     alias: aliases,
-    configuration,
+    configuration: {
+      'dot-notation': false,
+      'parse-numbers': false,
+    },
     // @ts-expect-error issue of @types/yargs-parser
     configObjects: [config],
   })
