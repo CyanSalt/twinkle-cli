@@ -1,3 +1,10 @@
+### [1.0.1](https://github.com/CyanSalt/twinkle-cli/compare/1.0.0...1.0.1) (2021-10-08)
+
+
+### Bug Fixes
+
+* parser config ([3db801b](https://github.com/CyanSalt/twinkle-cli/commit/3db801b7cca578937ee8dd166acc0e8de0bd9668))
+
 ## 1.0.0 (2021-09-30)
 
 
