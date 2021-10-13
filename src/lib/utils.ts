@@ -4,7 +4,7 @@ import * as readline from 'readline'
 import * as util from 'util'
 import chalk from 'chalk'
 import type { Options as FindUpOptions } from 'find-up'
-import { findUpSync } from 'find-up'
+import findUp from 'find-up'
 import resolveFrom from 'resolve-from'
 import y18n from 'y18n'
 import type { CommandModule } from 'yargs'
@@ -72,7 +72,7 @@ export async function ask(question) {
 }
 
 export function resolveFromProject(moduleId: string, options?: FindUpOptions) {
-  const nearestPackageJson = findUpSync('package.json', options)
+  const nearestPackageJson = findUp.sync('package.json', options)
   if (!nearestPackageJson) {
     throw new Error(`Cannot find module '${moduleId}'`)
   }
