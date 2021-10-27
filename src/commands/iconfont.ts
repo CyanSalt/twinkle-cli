@@ -79,7 +79,7 @@ export default defineCommandModule({
     }
 
     // 删除 output
-    await fs.promises.rmdir(output, { recursive: true })
+    await fs.promises.rm(output, { recursive: true })
 
     // 解压处理
     await execa(`unzip -j ${file} -d ${output}`)
