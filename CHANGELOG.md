@@ -1,3 +1,10 @@
+### [1.0.2](https://github.com/CyanSalt/twinkle-cli/compare/1.0.1...v1.0.2) (2021-10-27)
+
+
+### Bug Fixes
+
+* remove deprecated calls ([3f01845](https://github.com/CyanSalt/twinkle-cli/commit/3f01845555952ad8afbc1c4afe45895bd5f3d6c8))
+
 ### [1.0.1](https://github.com/CyanSalt/twinkle-cli/compare/1.0.0...1.0.1) (2021-10-08)
 
 
