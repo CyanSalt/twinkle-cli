@@ -10,7 +10,7 @@ import y18n from 'y18n'
 import type { CommandModule } from 'yargs'
 import yargs from 'yargs'
 
-export { Argv } from 'yargs'
+export type { Argv } from 'yargs'
 
 // @ts-expect-error error typings in @types/y18n
 export const createY18nFrom = (directory: string) => y18n({
