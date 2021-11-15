@@ -124,7 +124,7 @@ export function importDefault(obj: any) {
   return obj?.__esModule ? obj.default : obj
 }
 
-export function getInstalledPackages(options?: FindUpOptions) {
+export function getProjectContext(options?: FindUpOptions) {
   let isGlobal = false
   let pkg: Record<string, any>
   try {
@@ -134,6 +134,14 @@ export function getInstalledPackages(options?: FindUpOptions) {
     const stdout = childProcess.execSync('npm list -g --depth=0 --json')
     pkg = JSON.parse(String(stdout))
   }
+  return {
+    isGlobal,
+    pkg,
+  }
+}
+
+export function getInstalledPackages(options?: FindUpOptions) {
+  const { isGlobal, pkg } = getProjectContext(options)
   let deps: string[] = []
   if (pkg.dependencies) {
     deps = deps.concat(Object.keys(pkg.dependencies))
@@ -162,4 +170,26 @@ export function moduleIdStartsWith(moduleId: string, prefix: string) {
 
 export function omit(source: {}, keys: string[]) {
   return Object.fromEntries(Object.entries(source).filter(([key]) => !keys.includes(key)))
+}
+
+export function getNPMClient() {
+  const { isGlobal, pkg } = getProjectContext()
+  if (pkg.npmClient) {
+    return pkg.npmClient
+  }
+  const execPath = process.env.npm_execpath
+  if (execPath && path.basename(execPath, path.extname(execPath)) === 'yarn') {
+    return 'yarn'
+  }
+  if (!isGlobal) {
+    try {
+      const yarnLockPath = resolveFromProject('./yarn.lock')
+      if (yarnLockPath) {
+        return 'yarn'
+      }
+    } catch {
+      // ignore error
+    }
+  }
+  return 'npm'
 }

@@ -38,7 +38,7 @@ export default defineCommandModule({
           default: defaultIgnoredFiles,
         },
         iconfontURL: {
-          describe: builtinYi8n.__('The address of the iconfont project'),
+          describe: builtinYi8n.__('The URL address of the iconfont project'),
           default: 'https://www.iconfont.cn/manage/index?manage_type=myprojects&projectId=1891605',
         },
         transformer: {
@@ -46,7 +46,7 @@ export default defineCommandModule({
           coerce: (value?: Record<string, Transformer>) => value,
         },
         prune: {
-          describe: builtinYi8n.__('Whether to prune the ZIP file after extracting'),
+          describe: builtinYi8n.__('Whether to prune the file after generating'),
           type: 'boolean',
           default: false,
         },

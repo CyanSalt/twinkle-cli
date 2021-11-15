@@ -1,6 +1,6 @@
 import semver from 'semver'
 import type { Argv } from 'yargs'
-import { ask, builtinYi8n, defineCommandModule, execa, logger, requireFromProject, spawn } from '../lib/utils'
+import { ask, builtinYi8n, defineCommandModule, execa, getNPMClient, logger, requireFromProject, spawn } from '../lib/utils'
 
 interface OutdatedPackageData {
   current: string,
@@ -9,9 +9,13 @@ interface OutdatedPackageData {
   location: string,
 }
 
-const defaultPostInstall: Record<string, string> = {
-  '@cyansalt/eslint-config': 'npx @cyansalt/eslint-config --update -y',
-  '@cyansalt/stylelint-config': 'npx @cyansalt/stylelint-config --update -y',
+function getDefaultPostInstall() {
+  const npmClient = getNPMClient()
+  const isYarn = npmClient === 'yarn'
+  return {
+    '@cyansalt/eslint-config': `${isYarn ? 'yarn ' : 'npx @cyansalt/'}eslint-config --update -y`,
+    '@cyansalt/stylelint-config': `${isYarn ? 'yarn ' : 'npx @cyansalt/'}stylelint-config --update -y`,
+  }
 }
 
 export default defineCommandModule({
@@ -27,16 +31,14 @@ export default defineCommandModule({
           default: [] as string[],
           coerce: (value: string[]) => value.map(item => new RegExp(item)),
         },
-        latestPackages: {
-          describe: builtinYi8n.__('Packages that should be checked without considering semver ranges'),
-          type: 'string',
-          array: true,
-          default: [] as string[],
-          coerce: (value: string[]) => value.map(item => new RegExp(item)),
+        latest: {
+          describe: builtinYi8n.__('Whether to check packages without considering semver ranges'),
+          type: 'boolean',
+          default: true,
         },
         postinstall: {
           describe: builtinYi8n.__('Scripts that will be executed after specified packages installed'),
-          default: defaultPostInstall,
+          default: (() => getDefaultPostInstall()) as unknown as Record<string, string>,
           defaultDescription: '<@cyansalt/*>',
         },
         yes: {
@@ -53,20 +55,13 @@ export default defineCommandModule({
   async handler(argv) {
     const {
       packages,
-      latestPackages,
+      latest,
       postinstall,
       lock,
     } = argv
-    let versions: Record<string, string>
-    try {
-      const { stdout } = await execa('npm version')
-      versions = JSON.parse(stdout)
-    } catch {
-      versions = {}
-    }
     let outdated: Record<string, OutdatedPackageData>
     try {
-      const result = await execa(`${semver.satisfies(versions.npm, '>=7') ? 'npm' : 'npx npm@latest'} outdated --json${lock ? ' --all' : ''}`)
+      const result = await execa(`npm outdated --json${lock ? ' --all' : ''}`)
       outdated = JSON.parse(result.stdout)
     } catch (err) {
       outdated = JSON.parse(err.stdout)
@@ -84,12 +79,8 @@ export default defineCommandModule({
         info = JSON.parse(err.stdout)
       }
     }
-    const latestDeps = Object.keys(outdated)
-      .filter(name => latestPackages.some(pattern => pattern.test(name)))
-    const semverDeps = Object.keys(outdated)
+    let outdatedDeps = Object.keys(outdated)
       .filter(name => packages.some(pattern => pattern.test(name)))
-      .filter(name => !latestDeps.includes(name))
-    let outdatedDeps = [...latestDeps, ...semverDeps]
     outdatedDeps.forEach((name, index) => {
       const entry = outdated[name]
       try {
@@ -99,7 +90,7 @@ export default defineCommandModule({
         // There may be an ERR_PACKAGE_PATH_NOT_EXPORTED error
         entry['_version'] = entry.current
       }
-      entry['_target'] = index < latestDeps.length ? entry.latest : entry.wanted
+      entry['_target'] = latest ? entry.latest : entry.wanted
     })
     // More aggressive versions may be in use
     outdatedDeps = outdatedDeps.filter(name => {
@@ -128,17 +119,19 @@ export default defineCommandModule({
     const indirectDeps = lock
       ? outdatedDeps.filter(name => !info.dependencies[name])
       : []
+    const npmClient = getNPMClient()
+    const isYarn = npmClient === 'yarn'
     const installCommand = [
-      'npm install',
-      ...semverDeps,
-      ...latestDeps.map(name => `${name}@latest`),
+      isYarn ? 'yarn add' : 'npm install',
+      ...(latest ? outdatedDeps.map(name => `${name}@latest`) : outdatedDeps),
       ...scripts.map(script => `&& ${script}`),
-      '&& npm dedupe',
+      isYarn ? '' : '&& npm dedupe',
       ...(indirectDeps.length ? [
-        '&& npm uninstall',
+        '&&',
+        isYarn ? 'yarn remove' : 'npm uninstall',
         ...indirectDeps,
         // Avoid major version changes
-        '&& npm dedupe',
+        isYarn ? '' : '&& npm dedupe',
       ] : []),
     ].join(' ')
     spawn(installCommand)
