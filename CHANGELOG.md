@@ -1,3 +1,10 @@
+### [1.1.2](https://github.com/CyanSalt/twinkle-cli/compare/v1.1.1...v1.1.2) (2021-12-22)
+
+
+### Bug Fixes
+
+* remove sensitive parts ([a199979](https://github.com/CyanSalt/twinkle-cli/commit/a199979132cbec8ab994579f21536e5a379e3285))
+
 ### [1.1.1](https://github.com/CyanSalt/twinkle-cli/compare/v1.1.0...v1.1.1) (2021-12-22)
 
 
