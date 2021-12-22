@@ -8,6 +8,7 @@ yargs
   .middleware(configMiddleware, true)
   .commandDir('./commands', { visit: importDefault })
   .recommendCommands()
+  .demandCommand()
   .strict()
 
 applyPlugins(yargs)
