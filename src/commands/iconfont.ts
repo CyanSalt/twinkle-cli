@@ -39,7 +39,6 @@ export default defineCommandModule({
         },
         iconfontURL: {
           describe: builtinYi8n.__('The URL address of the iconfont project'),
-          default: 'https://www.iconfont.cn/manage/index?manage_type=myprojects&projectId=1891605',
         },
         transformer: {
           describe: builtinYi8n.__('A mapping of custom file transformer functions'),
@@ -73,7 +72,9 @@ export default defineCommandModule({
       await fs.promises.access(file, fs.constants.R_OK)
     } catch {
       logger.warn('The ZIP file of icons is not found. Please download it first.')
-      execa(`open "${iconfontURL}"`)
+      if (iconfontURL) {
+        execa(`open "${iconfontURL}"`)
+      }
       process.exitCode = 1
       return
     }
