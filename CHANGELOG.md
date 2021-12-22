@@ -1,3 +1,10 @@
+### [1.1.1](https://github.com/CyanSalt/twinkle-cli/compare/v1.1.0...v1.1.1) (2021-12-22)
+
+
+### Bug Fixes
+
+* emit error if command missing ([7b584dd](https://github.com/CyanSalt/twinkle-cli/commit/7b584dd3d5fd4b0ab86384e3bd7531b4f94e3f9f))
+
 ## [1.1.0](https://github.com/CyanSalt/twinkle-cli/compare/v1.0.2...v1.1.0) (2021-11-15)
 
 
