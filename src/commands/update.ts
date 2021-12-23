@@ -9,15 +9,6 @@ interface OutdatedPackageData {
   location: string,
 }
 
-function getDefaultPostInstall() {
-  const npmClient = getNPMClient()
-  const isYarn = npmClient === 'yarn'
-  return {
-    '@cyansalt/eslint-config': `${isYarn ? 'yarn ' : 'npx @cyansalt/'}eslint-config --update -y`,
-    '@cyansalt/stylelint-config': `${isYarn ? 'yarn ' : 'npx @cyansalt/'}stylelint-config --update -y`,
-  }
-}
-
 export default defineCommandModule({
   command: 'update',
   describe: builtinYi8n.__('Update dependencies'),
@@ -38,8 +29,7 @@ export default defineCommandModule({
         },
         postinstall: {
           describe: builtinYi8n.__('Scripts that will be executed after specified packages installed'),
-          default: (() => getDefaultPostInstall()) as unknown as Record<string, string>,
-          defaultDescription: '<@cyansalt/*>',
+          default: (() => ({})) as unknown as Record<string, string>,
         },
         yes: {
           describe: builtinYi8n.__('Whether to skip the prompt question'),
