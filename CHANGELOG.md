@@ -1,3 +1,10 @@
+### [1.1.3](https://github.com/CyanSalt/twinkle-cli/compare/v1.1.2...v1.1.3) (2021-12-23)
+
+
+### Bug Fixes
+
+* remove default postinstall ([35585df](https://github.com/CyanSalt/twinkle-cli/commit/35585df7abd7ab495e720f5d02e7d2ff97be89bf))
+
 ### [1.1.2](https://github.com/CyanSalt/twinkle-cli/compare/v1.1.1...v1.1.2) (2021-12-22)
 
 
